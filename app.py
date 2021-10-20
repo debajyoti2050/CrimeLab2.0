@@ -29,15 +29,16 @@ font2 = {'family':'serif','color':'red','size':15}
 def crime_template(str):
     temp1 = d[d['CRIME HEAD'].str.contains(str)] 
     temp2 = temp1.drop(temp1.index[[-1,-2,-10]]) 
+    #temp2 = temp2.sort_values(by='TOTAL',ascending=False)
     tl=temp2['TOTAL'].tolist()
-    temp2.plot(kind='bar',x='STATE/UT',y='TOTAL',color='red',figsize=(13.5,6))
+    temp2.plot(kind='bar',x='STATE/UT',y='TOTAL',color='red',figsize=(15,6))
     plt.xticks(rotation='vertical')
     plt.grid(b=True, color='purple',alpha=0.5)
     plt.title(str, fontdict = font1)
     plt.xlabel("LIST OF STATES/UT", fontdict = font2)
     plt.ylabel("RATE OF CRIMES", fontdict = font2)
-    for i in range(35):
-        plt.text(x=i-0.3, y = tl[i]+2, s = tl[i], size = 10)
+    for i in range(35):                         #to show the value on the bar
+        plt.text(x=i-0.4, y = tl[i]+2, s = tl[i], size = 10)
     buf = BytesIO()
     plt.savefig(buf, format="png", bbox_inches='tight')
     data = base64.b64encode(buf.getbuffer()).decode("ascii")
@@ -45,6 +46,7 @@ def crime_template(str):
 
 def state_ut_template(str):
     temp1 = d[d['STATE/UT'].str.contains(str)]
+    #temp1 = temp1.sort_values(by='TOTAL',ascending=False)
     tl=temp1['TOTAL'].tolist() 
     temp1.plot(kind='bar',x='CRIME HEAD',y='TOTAL',color='red',figsize=(8,6))
     plt.xticks(rotation='vertical')
@@ -62,6 +64,7 @@ def state_ut_template(str):
 def crime_by_year_template(str):
     y=d[d['STATE/UT'].str.contains('ALL-INDIA')]
     sc=y.loc[:,['CRIME HEAD',str]]
+    #sc = sc.sort_values(by=str,ascending=False)
     tl=sc[str].tolist()
     sc.plot(kind='bar',x='CRIME HEAD',y=str,color='red',figsize=(8,4))
     plt.xticks(rotation="vertical")
@@ -171,13 +174,17 @@ def crime_other_crimes_against_children():
     data = crime_template('OTHER CRIMES AGAINST CHILDREN')
     return render_template('showData.html', data=data)
 
-@app.route("/Total_Crime")
+@app.route("/Total_Crime")                            
 def total_crime():
     temp1 = d[d['STATE/UT']=='TOTAL (ALL-INDIA)']
+    temp1 = temp1.sort_values(by ='TOTAL' ,ascending=False)
+    tl=temp1['TOTAL'].tolist()
     temp1.plot(kind='bar',x='CRIME HEAD',y='TOTAL',color='red',figsize=(8,6))
     plt.xticks(rotation='vertical')
     plt.grid(b=True, color='purple',alpha=0.5)
     plt.title("TOTAL CRIMES", fontdict = font1)
+    for i in range(12):
+        plt.text(x=i-0.2, y = tl[i]+1000, s = tl[i], size = 8)
     plt.xlabel("LIST OF CRIMES", fontdict = font2)
     plt.ylabel("RATE OF CRIMES", fontdict = font2)
     buf = BytesIO()
@@ -185,7 +192,7 @@ def total_crime():
     data = base64.b64encode(buf.getbuffer()).decode("ascii")
     return render_template('showData.html', data=data)
     
-@app.route("/INDIA_CRIME_CHART")         #error in this code as of 17th oct 2021
+@app.route("/INDIA_CRIME_CHART")       
 def INDIA_CRIME_CHART():
     total_list=[]
     for i in list_state_ut:
