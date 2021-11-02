@@ -23,7 +23,7 @@ list_state = list_state_ut[:28:]    #particular state
 font1 = {'family':'serif','color':'orange','size':20}
 font2 = {'family':'serif','color':'red','size':15}
 
-######################################################################################
+#####################################################################################
 #important required templates
 
 def crime_template(str):
